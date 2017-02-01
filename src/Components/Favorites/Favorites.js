@@ -56,8 +56,9 @@ class Favorites extends Component {
             oJson = {},
             sKey;
 
-        for (; sKey = window.localStorage.key(i); i++) {
-            var url = window.localStorage.getItem(sKey);
+        for (;sKey = window.localStorage.key(i); i++) {
+            let storageKey = sKey;
+            let url = window.localStorage.getItem(storageKey);
             axios.get("https://api-ratp.pierre-grimaud.fr/v2" + url).then((r) => {
                 let fav = {
                     info: {
@@ -66,7 +67,7 @@ class Favorites extends Component {
                         type: r.data.response.informations.type,
                         line: r.data.response.informations.line,
                         url: url,
-                        favKey: sKey
+                        favKey: storageKey
                     },
                     trains: r.data.response.schedules
                 };
