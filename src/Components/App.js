@@ -40,8 +40,8 @@ class App extends Component {
             icon={nearbyIcon}
             onTouchTap={() => this.select(1)}
             />
-        </BottomNavigation >
-      </Paper >
+        </BottomNavigation>
+      </Paper>
     );
   }
 }

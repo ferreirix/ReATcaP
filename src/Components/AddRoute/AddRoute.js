@@ -46,13 +46,16 @@ class AddRoute extends Component {
                     onChangeIndex={this.handleChange}
                     >
                     <div style={styles.slide}>
-                        <AddMetro />
+                        <AddMetro transportType='metros'/>
                     </div>
                     <div style={styles.slide}>
-                        slide n°2
+                        <AddMetro transportType='rers'/>                        
                     </div>
                     <div style={styles.slide}>
-                        slide n°3
+                        <AddMetro transportType='tramways'/>                        
+                    </div>
+                    <div style={styles.slide}>
+                        <AddMetro transportType='bus'/>                        
                     </div>
                 </SwipeableViews>
             </div>

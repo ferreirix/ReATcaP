@@ -50,23 +50,23 @@ class Favorites extends Component {
     componentWillMount() {
 
     }
-    //https://api-ratp.pierre-grimaud.fr/v2/metros/8/stations/22?destination=275
-    //https://api-ratp.pierre-grimaud.fr/v2/metros/8/stations/275?destination=23
 
-    //https://api-ratp.pierre-grimaud.fr/v2/metros/8/stations/275?destination=23
     componentDidMount() {
         let i = 0,
             oJson = {},
             sKey;
 
         for (; sKey = window.localStorage.key(i); i++) {
-            axios.get("https://api-ratp.pierre-grimaud.fr/v2" + window.localStorage.getItem(sKey)).then((r) => {
+            var url = window.localStorage.getItem(sKey);
+            axios.get("https://api-ratp.pierre-grimaud.fr/v2" + url).then((r) => {
                 let fav = {
                     info: {
                         origin: r.data.response.informations.station.name,
                         destination: r.data.response.informations.destination.name,
                         type: r.data.response.informations.type,
                         line: r.data.response.informations.line,
+                        url: url,
+                        favKey: sKey
                     },
                     trains: r.data.response.schedules
                 };
@@ -75,11 +75,15 @@ class Favorites extends Component {
                 this.setState(favorites);
             })
         }
-
-        console.log(oJson);
     }
 
-
+    removeRoute(favKey) {
+        let {favorites} = this.state;
+        let route = favorites.findIndex(f => f.info.favKey === favKey);
+        favorites.splice(route, 1);
+        this.setState({ favorites });
+        localStorage.removeItem(favKey);
+    }
 
     render() {
         return (
@@ -137,7 +141,8 @@ class Favorites extends Component {
                             </CardText>
                             <CardActions>
                                 <FlatButton label="See more" />
-                                <FlatButton label="refresh" />
+                                <FlatButton label="Refresh" />
+                                <FlatButton label="Remove" onTouchTap={this.removeRoute.bind(this, f.info.favKey)} />
                             </CardActions>
                         </Card>)
                 })}
