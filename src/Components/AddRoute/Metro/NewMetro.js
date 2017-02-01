@@ -6,6 +6,7 @@ import Divider from 'material-ui/Divider';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import "./NewMetro.css";
 import RaisedButton from 'material-ui/RaisedButton';
+import AppConstants from '../../../AppConstants';
 
 
 const styles = {
@@ -30,7 +31,7 @@ class AddMetro extends Component {
     }
 
     componentDidMount() {
-        axios.get("https://api-ratp.pierre-grimaud.fr/v2/" + this.props.transportType).then(r => {
+        axios.get(AppConstants.ApiBaseUrl + this.props.transportType).then(r => {
             this.setState({ metros: r.data.response[this.props.transportType] });
         })
     }
@@ -39,7 +40,7 @@ class AddMetro extends Component {
         let {destinations} = this.state.metros[index];
         let stations;
 
-        axios.get("https://api-ratp.pierre-grimaud.fr/v2/" + this.props.transportType + "/" + value + "/stations").then(r => {
+        axios.get(AppConstants.ApiBaseUrl + this.props.transportType + "/" + value + "/stations").then(r => {
             stations = r.data.response.stations;
             this.setState(
                 {
@@ -61,8 +62,7 @@ class AddMetro extends Component {
 
     addToFavorites() {
         let key = 'fav_' + Math.random().toString(36).substring(7);
-        //metros/8 / stations / 275 ? destination = 23
-        localStorage.setItem(key, '/' +
+        localStorage.setItem(key,
             this.props.transportType + '/' +
             this.state.selectedMetroId + '/' + 'stations/' +
             this.state.selectedDestinationId + '?destination=' +
@@ -111,7 +111,7 @@ class AddMetro extends Component {
                     onChange={this.handleChangeDestination}
                     maxHeight={200}
                     >
-
+                    
                     {
                         this.state.stations.map(s => {
                             return <MenuItem key={s.id} value={s.id} primaryText={s.name} />

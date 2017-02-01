@@ -6,8 +6,7 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import Chip from 'material-ui/Chip';
 import './FavoritesStyle.css';
-
-
+import AppConstants from '../../AppConstants';
 
 import {
     blue300,
@@ -53,13 +52,13 @@ class Favorites extends Component {
 
     componentDidMount() {
         let i = 0,
-            oJson = {},
             sKey;
 
         for (;sKey = window.localStorage.key(i); i++) {
             let storageKey = sKey;
             let url = window.localStorage.getItem(storageKey);
-            axios.get("https://api-ratp.pierre-grimaud.fr/v2" + url).then((r) => {
+            console.log(AppConstants.ApiBaseUrl + url);
+            axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
                 let fav = {
                     info: {
                         origin: r.data.response.informations.station.name,
