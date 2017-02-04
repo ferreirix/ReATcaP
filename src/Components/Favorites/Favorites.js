@@ -14,12 +14,12 @@ import {
     orange200,
     deepOrange300,
     pink400,
-    gray200,
+    gray800,
     purple500,
 } from 'material-ui/styles/colors';
 
 const styleTransportType = {
-    fontSize: 25,
+    fontSize: 20,
 };
 
 const style = {
@@ -54,7 +54,7 @@ class Favorites extends Component {
         let i = 0,
             sKey;
 
-        for (;sKey = window.localStorage.key(i); i++) {
+        for (; sKey = window.localStorage.key(i); i++) {
             let storageKey = sKey;
             let url = window.localStorage.getItem(storageKey);
             console.log(AppConstants.ApiBaseUrl + url);
@@ -96,7 +96,7 @@ class Favorites extends Component {
                                 showExpandableButton={true}
                                 >
                                 <Avatar
-                                    backgroundColor={gray200}
+                                    backgroundColor={gray800}
                                     size={20}
                                     className='fixLeftAlignLineType'
                                     style={styleTransportType}
@@ -112,9 +112,9 @@ class Favorites extends Component {
                                     {f.info.line}
                                 </Avatar>
                                 {f.info.origin}
-                                <ActionFlightTakeoff style={iconStyles} />
+                                <br />
                                 {f.info.destination}
-
+                                <ActionFlightTakeoff style={iconStyles} />
                                 <Chip
                                     style={chip}
                                     >
@@ -123,6 +123,7 @@ class Favorites extends Component {
                                             f.trains[0].message : ''
                                     }
                                 </Chip>
+
                             </CardHeader>
                             <CardText expandable={true}>
                                 <br />

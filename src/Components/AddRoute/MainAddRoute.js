@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import SwipeableViews from 'react-swipeable-views';
-import AddMetro from './Metro/NewMetro';
+import NewRoute from './Route/NewRoute';
 
 const styles = {
     headline: {
@@ -15,7 +15,7 @@ const styles = {
     },
 };
 
-class AddRoute extends Component {
+class MainAddRoute extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -46,16 +46,16 @@ class AddRoute extends Component {
                     onChangeIndex={this.handleChange}
                     >
                     <div style={styles.slide}>
-                        <AddMetro transportType='metros'/>
+                        <NewRoute transportType='metros'/>
                     </div>
                     <div style={styles.slide}>
-                        <AddMetro transportType='rers'/>                        
+                        <NewRoute transportType='rers'/>                        
                     </div>
                     <div style={styles.slide}>
-                        <AddMetro transportType='tramways'/>                        
+                        <NewRoute transportType='tramways'/>                        
                     </div>
                     <div style={styles.slide}>
-                        <AddMetro transportType='bus'/>                        
+                        <NewRoute transportType='bus'/>                        
                     </div>
                 </SwipeableViews>
             </div>
@@ -63,4 +63,4 @@ class AddRoute extends Component {
     }
 }
 
-export default AddRoute;
+export default MainAddRoute;

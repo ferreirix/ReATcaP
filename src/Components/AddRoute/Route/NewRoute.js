@@ -4,9 +4,10 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
-import "./NewMetro.css";
+import "./NewRoute.css";
 import RaisedButton from 'material-ui/RaisedButton';
 import AppConstants from '../../../AppConstants';
+import Snackbar from 'material-ui/Snackbar';
 
 
 const styles = {
@@ -18,22 +19,28 @@ const styles = {
     },
 };
 
+const defaultState = {
+    metros: [],
+    selectedMetroId: 0,
+    selectedDestinationId: 0,
+    destinations: [],
+    stations: [],
+    snackOpened: false
+}
+
 class AddMetro extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            metros: [],
-            selectedMetroId: 0,
-            selectedDestinationId: 0,
-            destinations: [],
-            stations: [],
-        }
+        this.state = defaultState;
     }
 
     componentDidMount() {
         axios.get(AppConstants.ApiBaseUrl + this.props.transportType).then(r => {
-            this.setState({ metros: r.data.response[this.props.transportType] });
-        })
+            this.setState({
+                metros: r.data.response[this.props.transportType],
+            });
+        });
+        console.log('snack status : ' + this.state.snackOpened);
     }
 
     handleChange = (event, index, value) => {
@@ -67,9 +74,26 @@ class AddMetro extends Component {
             this.state.selectedMetroId + '/' + 'stations/' +
             this.state.selectedDestinationId + '?destination=' +
             this.state.destinations[0].id);
-    }
+
+        let newState = defaultState;
+        newState.snackOpened = true;
+        console.log('snack status : ' + newState.snackOpened);                
+        this.setState(newState);
+        console.log('snack status : ' + this.state.snackOpened);        
+    };
+
+    handleRequestCloseSnack() {
+        this.setState({
+            snackOpened: false,
+        });
+    };
+
+    handleUndoAddRoute() {
+        //TODO
+    };
 
     render() {
+
 
         return (
             <div className="NewMetroForm">
@@ -111,7 +135,6 @@ class AddMetro extends Component {
                     onChange={this.handleChangeDestination}
                     maxHeight={200}
                     >
-                    
                     {
                         this.state.stations.map(s => {
                             return <MenuItem key={s.id} value={s.id} primaryText={s.name} />
@@ -124,6 +147,15 @@ class AddMetro extends Component {
                     onTouchTap={this.addToFavorites.bind(this)}
                     label="Add to favorites"
                     fullWidth={true} />
+
+                <Snackbar
+                    open={this.state.snackOpened}
+                    message='Route created!'
+                    action="Undo"
+                    autoHideDuration={4000}
+                    onActionTouchTap={this.handleUndoAddRoute.bind(this)}
+                    onRequestClose={this.handleRequestCloseSnack.bind(this)}
+                    />
 
             </div>
         );
