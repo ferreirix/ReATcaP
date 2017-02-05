@@ -6,6 +6,7 @@ import IconFavorite from 'material-ui/svg-icons/action/favorite';
 import IconServiceStatus from 'material-ui/svg-icons/alert/error';
 import Favorites from './Favorites/Favorites';
 import MainAddRoute from './AddRoute/MainAddRoute';
+import ServiceStatus from './ServiceStatus/ServiceStatus';
 import './App.css'
 
 const nearbyIcon = <IconTrain />;
@@ -26,11 +27,26 @@ class App extends Component {
   select = (index) => this.setState({ selectedIndex: index });
 
   render() {
+
+    let viewToDisplay = null;
+    switch (this.state.selectedIndex) {
+      case 0:
+        viewToDisplay = <Favorites />;
+        break;
+      case 1:
+        viewToDisplay = <MainAddRoute />
+        break;
+      case 2:
+        viewToDisplay = <ServiceStatus />
+        break;
+      default:
+        break;
+    }
+
+
     return (
       <Paper zDepth={1} style={paperStyle}>
-
-        {this.state.selectedIndex == 0 ? <Favorites /> : <MainAddRoute />}
-
+        {viewToDisplay}
         <BottomNavigation selectedIndex={this.state.selectedIndex} className='footer' >
           <BottomNavigationItem
             label="Favorites"

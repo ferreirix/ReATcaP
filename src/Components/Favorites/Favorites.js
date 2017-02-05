@@ -8,6 +8,8 @@ import Chip from 'material-ui/Chip';
 import './FavoritesStyle.css';
 import AppConstants from '../../AppConstants';
 import update from 'immutability-helper';
+import CircularProgress from 'material-ui/CircularProgress';
+import GetRouteColor from '../../RouteColor';
 import {
     blue300,
     indigo900,
@@ -68,7 +70,8 @@ class Favorites extends Component {
                         url: url,
                         favKey: storageKey
                     },
-                    schedules: r.data.response.schedules
+                    schedules: r.data.response.schedules,
+                    isRefreshing: false
                 };
                 let {favorites} = this.state;
                 favorites.push(fav);
@@ -89,15 +92,21 @@ class Favorites extends Component {
     }
 
     refreshRoute(favKey, url) {
-        axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
-            let {favorites} = this.state;
+        let {favorites} = this.state;
+        let routeIndex = favorites.findIndex(function (f) {
+            return f.info.favKey === favKey;
+        });
+        let updatedFavoriteLoading = update(favorites[routeIndex], { isRefreshing: { $set: true } });
 
-            let routeIndex = favorites.findIndex(function (f) {
-                return f.info.favKey === favKey;
-            });
+        let newDataRefresh = update(favorites, {
+            $splice: [[routeIndex, 1, updatedFavoriteLoading]]
+        });
+        this.setState({ favorites: newDataRefresh });
+
+        axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
 
             let updatedFavorite = update(favorites[routeIndex], { schedules: { $set: r.data.response.schedules } });
-
+            updatedFavorite.isRefreshing = false;
             let newData = update(favorites, {
                 $splice: [[routeIndex, 1, updatedFavorite]]
             });
@@ -127,7 +136,7 @@ class Favorites extends Component {
                                     </Avatar>
 
                                     <Avatar
-                                        backgroundColor={purple500}
+                                        backgroundColor={GetRouteColor(f.info.type, f.info.line)}
                                         size={30}
                                         style={style}
                                         >
@@ -145,7 +154,10 @@ class Favorites extends Component {
                                                 f.schedules[0].message : ''
                                         }
                                     </Chip>
-
+                                    {
+                                        f.isRefreshing ?
+                                            <CircularProgress size={30} className="refreshCircular" /> : ''
+                                    }
                                 </CardHeader>
                                 <CardText expandable={true}>
                                     <br />

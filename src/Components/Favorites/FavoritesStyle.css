@@ -5,3 +5,8 @@
 .cardStyle{
     margin: 12px;
 }
+
+.refreshCircular{
+    float: right;
+    padding-right: 20px;
+}
