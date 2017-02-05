@@ -22,7 +22,8 @@ const styles = {
 const defaultState = {
     metros: [],
     selectedMetroId: 0,
-    selectedDestinationId: 0,
+    selectedDepartureId: 0,
+    selectedDestinationId : 0,
     destinations: [],
     stations: [],
     snackOpened: false
@@ -59,7 +60,15 @@ class AddMetro extends Component {
         })
     }
 
-    handleChangeDestination = (e, i, value) => {
+    handleChangeDeparture = (e, i, value) => {
+        this.setState(
+            {
+                selectedDepartureId: value,
+            }
+        );
+    }
+
+    destinationChanged(e, value) {
         this.setState(
             {
                 selectedDestinationId: value,
@@ -72,15 +81,17 @@ class AddMetro extends Component {
         localStorage.setItem(key,
             this.props.transportType + '/' +
             this.state.selectedMetroId + '/' + 'stations/' +
-            this.state.selectedDestinationId + '?destination=' +
-            this.state.destinations[0].id);
+            this.state.selectedDepartureId + '?destination=' +
+            this.state.selectedDestinationId);
 
         let newState = defaultState;
         newState.snackOpened = true;
-        console.log('snack status : ' + newState.snackOpened);                
+        console.log('snack status : ' + newState.snackOpened);
         this.setState(newState);
-        console.log('snack status : ' + this.state.snackOpened);        
+        console.log('snack status : ' + this.state.snackOpened);
     };
+
+
 
     handleRequestCloseSnack() {
         this.setState({
@@ -114,7 +125,11 @@ class AddMetro extends Component {
                 <br />
                 <p>Destination </p>
 
-                <RadioButtonGroup name="notRight" labelPosition="left" style={styles.block}>
+                <RadioButtonGroup
+                    name="notRight"
+                    labelPosition="left"
+                    onChange={this.destinationChanged.bind(this)}
+                    style={styles.block}>
                     {
                         this.state.destinations.map(d => {
                             return <RadioButton
@@ -131,8 +146,8 @@ class AddMetro extends Component {
 
                 <SelectField
                     floatingLabelText="Departure"
-                    value={this.state.selectedDestinationId}
-                    onChange={this.handleChangeDestination}
+                    value={this.state.selectedDepartureId}
+                    onChange={this.handleChangeDeparture}
                     maxHeight={200}
                     >
                     {
