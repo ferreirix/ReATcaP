@@ -33,7 +33,7 @@ export default function GetRouteColor(lignetype, id) {
             break;
         case 'bus':
             break;
-        case 'tram':
+        case 'tramway':
             color = getTramColor(id);
             break;
         case 'rer':
