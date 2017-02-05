@@ -7,7 +7,7 @@ import FlatButton from 'material-ui/FlatButton';
 import Chip from 'material-ui/Chip';
 import './FavoritesStyle.css';
 import AppConstants from '../../AppConstants';
-
+import update from 'immutability-helper';
 import {
     blue300,
     indigo900,
@@ -68,7 +68,7 @@ class Favorites extends Component {
                         url: url,
                         favKey: storageKey
                     },
-                    trains: r.data.response.schedules
+                    schedules: r.data.response.schedules
                 };
                 let {favorites} = this.state;
                 favorites.push(fav);
@@ -76,6 +76,9 @@ class Favorites extends Component {
             })
         }
     }
+
+
+
 
     removeRoute(favKey) {
         let {favorites} = this.state;
@@ -85,68 +88,89 @@ class Favorites extends Component {
         localStorage.removeItem(favKey);
     }
 
+    refreshRoute(favKey, url) {
+        axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
+            let {favorites} = this.state;
+
+            let routeIndex = favorites.findIndex(function (f) {
+                return f.info.favKey === favKey;
+            });
+
+            let updatedFavorite = update(favorites[routeIndex], { schedules: { $set: r.data.response.schedules } });
+
+            let newData = update(favorites, {
+                $splice: [[routeIndex, 1, updatedFavorite]]
+            });
+            this.setState({ favorites: newData });
+        });
+
+    }
+
     render() {
         return (
-            <div>
-                {this.state.favorites.map(f => {
-                    return (
-                        <Card className='cardStyle'>
-                            <CardHeader
-                                actAsExpander={true}
-                                showExpandableButton={true}
-                                >
-                                <Avatar
-                                    backgroundColor={gray800}
-                                    size={20}
-                                    className='fixLeftAlignLineType'
-                                    style={styleTransportType}
+            <div >
+                {
+                    this.state.favorites.map(f => {
+                        return (
+                            <Card className='cardStyle' key={f.info.favKey}>
+                                <CardHeader
+                                    actAsExpander={true}
+                                    showExpandableButton={true}
                                     >
-                                    {f.info.type.substr(0, 1).toUpperCase()}
-                                </Avatar>
+                                    <Avatar
+                                        backgroundColor={gray800}
+                                        size={20}
+                                        className='fixLeftAlignLineType'
+                                        style={styleTransportType}
+                                        >
+                                        {f.info.type.substr(0, 1).toUpperCase()}
+                                    </Avatar>
 
-                                <Avatar
-                                    backgroundColor={purple500}
-                                    size={30}
-                                    style={style}
-                                    >
-                                    {f.info.line}
-                                </Avatar>
-                                {f.info.origin}
-                                <br />
-                                {f.info.destination}
-                                <ActionFlightTakeoff style={iconStyles} />
-                                <Chip
-                                    style={chip}
-                                    >
+                                    <Avatar
+                                        backgroundColor={purple500}
+                                        size={30}
+                                        style={style}
+                                        >
+                                        {f.info.line}
+                                    </Avatar>
+                                    {f.info.origin}
+                                    <br />
+                                    {f.info.destination}
+                                    <ActionFlightTakeoff style={iconStyles} />
+                                    <Chip
+                                        style={chip}
+                                        >
+                                        {
+                                            f.schedules.length > 0 ?
+                                                f.schedules[0].message : ''
+                                        }
+                                    </Chip>
+
+                                </CardHeader>
+                                <CardText expandable={true}>
+                                    <br />
                                     {
-                                        f.trains.length > 0 ?
-                                            f.trains[0].message : ''
+                                        f.schedules.map(t => {
+                                            return (
+                                                <Chip
+                                                    style={chip}
+                                                    >
+                                                    {t.message}
+                                                </Chip>
+                                            )
+                                        })
                                     }
-                                </Chip>
-
-                            </CardHeader>
-                            <CardText expandable={true}>
-                                <br />
-
-                                {
-                                    f.trains.map(t => {
-                                        return (
-                                            <Chip
-                                                style={chip}
-                                                >
-                                                {t.message}
-                                            </Chip>
-                                        )
-                                    })
-                                }
-                            </CardText>
-                            <CardActions>
-                                <FlatButton label="See more" />
-                                <FlatButton label="Refresh" />
-                                <FlatButton label="Remove" onTouchTap={this.removeRoute.bind(this, f.info.favKey)} />
-                            </CardActions>
-                        </Card>)
-                })}
+                                </CardText>
+                                <CardActions>
+                                    <FlatButton
+                                        label="Refresh"
+                                        onTouchTap={this.refreshRoute.bind(this, f.info.favKey, f.info.url)}
+                                        />
+                                    <FlatButton label="Remove" onTouchTap={this.removeRoute.bind(this, f.info.favKey)} />
+                                </CardActions>
+                            </Card>)
+                    })
+                }
             </div>
         );
     }
