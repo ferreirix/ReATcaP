@@ -10,6 +10,8 @@ import AppConstants from '../../AppConstants';
 import update from 'immutability-helper';
 import CircularProgress from 'material-ui/CircularProgress';
 import GetRouteColor from '../../RouteColor';
+import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton';
 import {
     blue300,
     indigo900,
@@ -41,10 +43,12 @@ const chip = {
 
 
 class Favorites extends Component {
+    
     constructor(props) {
         super(props);
         this.state = {
-            favorites: []
+            favorites: [],
+            deleteFavoriteOpen: false,
         }
     }
 
@@ -58,7 +62,8 @@ class Favorites extends Component {
 
         for (; sKey = window.localStorage.key(i); i++) {
             let storageKey = sKey;
-            let url = window.localStorage.getItem(storageKey);
+            let url = window.
+            localStorage.getItem(storageKey);
             console.log(AppConstants.ApiBaseUrl + url);
             axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
                 let fav = {
@@ -80,15 +85,24 @@ class Favorites extends Component {
         }
     }
 
+    handleOpenDeleteModal() {
+        this.setState({ deleteFavoriteOpen: true });
+    };
 
+    handleClose() {
+        this.setState({ deleteFavoriteOpen: false });
+    };
 
-
-    removeRoute(favKey) {
+    handleDelete(favKey) {
         let {favorites} = this.state;
         let route = favorites.findIndex(f => f.info.favKey === favKey);
         favorites.splice(route, 1);
-        this.setState({ favorites });
+        this.setState({ favorites, "deleteFavoriteOpen": false });
         localStorage.removeItem(favKey);
+    }
+
+    removeRoute() {
+        this.handleOpenDeleteModal();
     }
 
     refreshRoute(favKey, url) {
@@ -116,6 +130,20 @@ class Favorites extends Component {
     }
 
     render() {
+
+        const modalActions = [
+            <FlatButton
+                label="Cancel"
+                primary={true}
+                onTouchTap={this.handleClose.bind(this)}
+                />,
+            <FlatButton
+                label="Delete"
+                secondary={true}
+                onTouchTap={this.handleDelete.bind(this)}
+                />,
+        ];
+
         return (
             <div >
                 {
@@ -183,6 +211,15 @@ class Favorites extends Component {
                             </Card>)
                     })
                 }
+                <Dialog
+                    actions={modalActions}
+                    modal={false}
+                    open={this.state.deleteFavoriteOpen}
+                    onRequestClose={this.handleClose}
+                    >
+                    Delete favorite route?
+        </Dialog>
+
             </div>
         );
     }
