@@ -43,7 +43,7 @@ const chip = {
 
 
 class Favorites extends Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
@@ -62,23 +62,24 @@ class Favorites extends Component {
 
         for (; sKey = window.localStorage.key(i); i++) {
             let storageKey = sKey;
-            let url = window.
-            localStorage.getItem(storageKey);
+            let url = window.localStorage.getItem(storageKey);
+
             console.log(AppConstants.ApiBaseUrl + url);
+
             axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
                 let fav = {
                     info: {
-                        origin: r.data.response.informations.station.name,
-                        destination: r.data.response.informations.destination.name,
-                        type: r.data.response.informations.type,
-                        line: r.data.response.informations.line,
+                         origin: 'asdfasdf',
+                         destination: 'asdf',
+                         type: 'metro',
+                         line: '1',
                         url: url,
                         favKey: storageKey
                     },
-                    schedules: r.data.response.schedules,
+                    schedules: r.data,
                     isRefreshing: false
                 };
-                let {favorites} = this.state;
+                let { favorites } = this.state;
                 favorites.push(fav);
                 this.setState(favorites);
             })
@@ -94,7 +95,7 @@ class Favorites extends Component {
     };
 
     handleDelete(favKey) {
-        let {favorites} = this.state;
+        let { favorites } = this.state;
         let route = favorites.findIndex(f => f.info.favKey === favKey);
         favorites.splice(route, 1);
         this.setState({ favorites, "deleteFavoriteOpen": false });
@@ -106,7 +107,7 @@ class Favorites extends Component {
     }
 
     refreshRoute(favKey, url) {
-        let {favorites} = this.state;
+        let { favorites } = this.state;
         let routeIndex = favorites.findIndex(function (f) {
             return f.info.favKey === favKey;
         });
@@ -136,12 +137,12 @@ class Favorites extends Component {
                 label="Cancel"
                 primary={true}
                 onTouchTap={this.handleClose.bind(this)}
-                />,
+            />,
             <FlatButton
                 label="Delete"
                 secondary={true}
                 onTouchTap={this.handleDelete.bind(this)}
-                />,
+            />,
         ];
 
         return (
@@ -153,13 +154,13 @@ class Favorites extends Component {
                                 <CardHeader
                                     actAsExpander={true}
                                     showExpandableButton={true}
-                                    >
+                                >
                                     <Avatar
                                         backgroundColor={gray800}
                                         size={20}
                                         className='fixLeftAlignLineType'
                                         style={styleTransportType}
-                                        >
+                                    >
                                         {f.info.type.substr(0, 1).toUpperCase()}
                                     </Avatar>
 
@@ -167,7 +168,7 @@ class Favorites extends Component {
                                         backgroundColor={GetRouteColor(f.info.type, f.info.line)}
                                         size={30}
                                         style={style}
-                                        >
+                                    >
                                         {f.info.line}
                                     </Avatar>
                                     {f.info.origin}
@@ -176,7 +177,7 @@ class Favorites extends Component {
                                     <ActionFlightTakeoff style={iconStyles} />
                                     <Chip
                                         style={chip}
-                                        >
+                                    >
                                         {
                                             f.schedules.length > 0 ?
                                                 f.schedules[0].message : ''
@@ -194,8 +195,8 @@ class Favorites extends Component {
                                             return (
                                                 <Chip
                                                     style={chip}
-                                                    >
-                                                    {t.message}
+                                                >
+                                                    {t}
                                                 </Chip>
                                             )
                                         })
@@ -205,7 +206,7 @@ class Favorites extends Component {
                                     <FlatButton
                                         label="Refresh"
                                         onTouchTap={this.refreshRoute.bind(this, f.info.favKey, f.info.url)}
-                                        />
+                                    />
                                     <FlatButton label="Remove" onTouchTap={this.removeRoute.bind(this, f.info.favKey)} />
                                 </CardActions>
                             </Card>)
@@ -216,7 +217,7 @@ class Favorites extends Component {
                     modal={false}
                     open={this.state.deleteFavoriteOpen}
                     onRequestClose={this.handleClose}
-                    >
+                >
                     Delete favorite route?
         </Dialog>
 

@@ -2,7 +2,7 @@ class AppConstants {
 
 }
 
-AppConstants.ApiBaseUrl = "https://api-ratp.pierre-grimaud.fr/v2/";
+AppConstants.ApiBaseUrl = "http://restratpws.azurewebsites.net/api/";
 
 
 Object.freeze(AppConstants); //no more changes allowed for this Object

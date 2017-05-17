@@ -23,7 +23,7 @@ const defaultState = {
     metros: [],
     selectedMetroId: 0,
     selectedDepartureId: 0,
-    selectedDestinationId : 0,
+    selectedDestinationId: 0,
     destinations: [],
     stations: [],
     snackOpened: false
@@ -36,28 +36,32 @@ class AddMetro extends Component {
     }
 
     componentDidMount() {
-        axios.get(AppConstants.ApiBaseUrl + this.props.transportType).then(r => {
+        axios.get(AppConstants.ApiBaseUrl + "lines/" + this.props.transportType).then(r => {
+            console.log(r);
             this.setState({
-                metros: r.data.response[this.props.transportType],
+                metros: r.data,
             });
         });
         console.log('snack status : ' + this.state.snackOpened);
     }
 
-    handleChange = (event, index, value) => {
-        let {destinations} = this.state.metros[index];
-        let stations;
+    handleChangeLine = (event, index, value) => {
+        axios.get(AppConstants.ApiBaseUrl + "directions/" + value).then(r => {
+            this.setState(
+                {
+                    destinations: r.data
+                }
+            );
+        });
 
-        axios.get(AppConstants.ApiBaseUrl + this.props.transportType + "/" + value + "/stations").then(r => {
-            stations = r.data.response.stations;
+        axios.get(AppConstants.ApiBaseUrl + "stations/" + value).then(r => {
             this.setState(
                 {
                     selectedMetroId: value,
-                    destinations: destinations,
-                    stations: stations
+                    stations: r.data
                 }
             );
-        })
+        });
     }
 
     handleChangeDeparture = (e, i, value) => {
@@ -79,9 +83,9 @@ class AddMetro extends Component {
     addToFavorites() {
         let key = 'fav_' + Math.random().toString(36).substring(7);
         localStorage.setItem(key,
-            this.props.transportType + '/' +
-            this.state.selectedMetroId + '/' + 'stations/' +
-            this.state.selectedDepartureId + '?destination=' +
+            'missions/' +
+            this.state.selectedMetroId + '/from/' +
+            this.state.selectedDepartureId + '/way/' +
             this.state.selectedDestinationId);
 
         let newState = defaultState;
@@ -111,12 +115,12 @@ class AddMetro extends Component {
                 <SelectField
                     floatingLabelText="Line"
                     value={this.state.selectedMetroId}
-                    onChange={this.handleChange}
-                    >
+                    onChange={this.handleChangeLine}
+                >
 
                     {
                         this.state.metros.map(m => {
-                            return <MenuItem key={m.line} value={m.line} primaryText={"Ligne " + m.line} />
+                            return <MenuItem key={m.id} value={m.id} primaryText={"Ligne " + m.shortName} />
                         })
                     }
 
@@ -133,11 +137,11 @@ class AddMetro extends Component {
                     {
                         this.state.destinations.map(d => {
                             return <RadioButton
-                                key={d.id}
-                                value={d.id}
+                                key={d.way}
+                                value={d.way}
                                 label={d.name}
                                 style={styles.radioButton}
-                                />
+                            />
                         })
                     }
                 </RadioButtonGroup>
@@ -149,7 +153,7 @@ class AddMetro extends Component {
                     value={this.state.selectedDepartureId}
                     onChange={this.handleChangeDeparture}
                     maxHeight={200}
-                    >
+                >
                     {
                         this.state.stations.map(s => {
                             return <MenuItem key={s.id} value={s.id} primaryText={s.name} />
@@ -170,7 +174,7 @@ class AddMetro extends Component {
                     autoHideDuration={4000}
                     onActionTouchTap={this.handleUndoAddRoute.bind(this)}
                     onRequestClose={this.handleRequestCloseSnack.bind(this)}
-                    />
+                />
 
             </div>
         );
