@@ -69,10 +69,10 @@ class Favorites extends Component {
             axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
                 let fav = {
                     info: {
-                         origin: 'asdfasdf',
-                         destination: 'asdf',
-                         type: 'metro',
-                         line: '1',
+                        origin: 'asdfasdf',
+                        destination: 'asdf',
+                        type: 'metro',
+                        line: '1',
                         url: url,
                         favKey: storageKey
                     },
@@ -161,7 +161,7 @@ class Favorites extends Component {
                                         className='fixLeftAlignLineType'
                                         style={styleTransportType}
                                     >
-                                        {f.info.type.substr(0, 1).toUpperCase()}
+                                        // {f.info.type.substr(0, 1).toUpperCase()}
                                     </Avatar>
 
                                     <Avatar

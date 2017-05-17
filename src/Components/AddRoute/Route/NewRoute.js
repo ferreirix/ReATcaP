@@ -24,6 +24,8 @@ const defaultState = {
     selectedMetroId: 0,
     selectedDepartureId: 0,
     selectedDestinationId: 0,
+    selectedDepartureName: '',
+    selectedDestinationName: '',
     destinations: [],
     stations: [],
     snackOpened: false
@@ -82,11 +84,19 @@ class AddMetro extends Component {
 
     addToFavorites() {
         let key = 'fav_' + Math.random().toString(36).substring(7);
-        localStorage.setItem(key,
-            'missions/' +
+
+        let route = {};
+        route.url = 'missions/' +
             this.state.selectedMetroId + '/from/' +
             this.state.selectedDepartureId + '/way/' +
-            this.state.selectedDestinationId);
+            this.state.selectedDestinationId;
+
+            route.origin =
+            route.destination = 
+            route.type = this.props.transportType;
+            route.line = this.state.selectedMetroId;
+
+        localStorage.setItem(key, JSON.stringify(route));
 
         let newState = defaultState;
         newState.snackOpened = true;
