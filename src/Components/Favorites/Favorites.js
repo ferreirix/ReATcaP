@@ -62,25 +62,15 @@ class Favorites extends Component {
 
         for (; sKey = window.localStorage.key(i); i++) {
             let storageKey = sKey;
-            let url = window.localStorage.getItem(storageKey);
+            let route = JSON.parse(window.localStorage.getItem(storageKey));
 
-            console.log(AppConstants.ApiBaseUrl + url);
+            console.log(AppConstants.ApiBaseUrl + route.url);
 
-            axios.get(AppConstants.ApiBaseUrl + url).then((r) => {
-                let fav = {
-                    info: {
-                        origin: 'asdfasdf',
-                        destination: 'asdf',
-                        type: 'metro',
-                        line: '1',
-                        url: url,
-                        favKey: storageKey
-                    },
-                    schedules: r.data,
-                    isRefreshing: false
-                };
+            axios.get(AppConstants.ApiBaseUrl + route.url).then((r) => {
+                route.schedules = r.data;
+                route.isRefreshing = false;
                 let { favorites } = this.state;
-                favorites.push(fav);
+                favorites.push(route);
                 this.setState(favorites);
             })
         }
@@ -96,7 +86,7 @@ class Favorites extends Component {
 
     handleDelete(favKey) {
         let { favorites } = this.state;
-        let route = favorites.findIndex(f => f.info.favKey === favKey);
+        let route = favorites.findIndex(f => f.favKey === favKey);
         favorites.splice(route, 1);
         this.setState({ favorites, "deleteFavoriteOpen": false });
         localStorage.removeItem(favKey);
@@ -109,7 +99,7 @@ class Favorites extends Component {
     refreshRoute(favKey, url) {
         let { favorites } = this.state;
         let routeIndex = favorites.findIndex(function (f) {
-            return f.info.favKey === favKey;
+            return f.favKey === favKey;
         });
         let updatedFavoriteLoading = update(favorites[routeIndex], { isRefreshing: { $set: true } });
 
@@ -150,30 +140,21 @@ class Favorites extends Component {
                 {
                     this.state.favorites.map(f => {
                         return (
-                            <Card className='cardStyle' key={f.info.favKey}>
+                            <Card className='cardStyle' key={f.favKey}>
                                 <CardHeader
                                     actAsExpander={true}
                                     showExpandableButton={true}
                                 >
                                     <Avatar
-                                        backgroundColor={gray800}
                                         size={20}
+                                        src={AppConstants.ApiBaseUrl + f.image}
                                         className='fixLeftAlignLineType'
                                         style={styleTransportType}
                                     >
-                                        // {f.info.type.substr(0, 1).toUpperCase()}
                                     </Avatar>
-
-                                    <Avatar
-                                        backgroundColor={GetRouteColor(f.info.type, f.info.line)}
-                                        size={30}
-                                        style={style}
-                                    >
-                                        {f.info.line}
-                                    </Avatar>
-                                    {f.info.origin}
+                                    {f.origin}
                                     <br />
-                                    {f.info.destination}
+                                    {f.destination}
                                     <ActionFlightTakeoff style={iconStyles} />
                                     <Chip
                                         style={chip}
@@ -205,9 +186,9 @@ class Favorites extends Component {
                                 <CardActions>
                                     <FlatButton
                                         label="Refresh"
-                                        onTouchTap={this.refreshRoute.bind(this, f.info.favKey, f.info.url)}
+                                        onTouchTap={this.refreshRoute.bind(this, f.favKey, f.url)}
                                     />
-                                    <FlatButton label="Remove" onTouchTap={this.removeRoute.bind(this, f.info.favKey)} />
+                                    <FlatButton label="Remove" onTouchTap={this.removeRoute.bind(this, f.favKey)} />
                                 </CardActions>
                             </Card>)
                     })

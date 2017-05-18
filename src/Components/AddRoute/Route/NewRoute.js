@@ -67,34 +67,42 @@ class AddMetro extends Component {
     }
 
     handleChangeDeparture = (e, i, value) => {
+        let { stations } = this.state;
+        let stationIndex = stations.findIndex(f => f.id === value);
         this.setState(
             {
                 selectedDepartureId: value,
+                selectedDepartureName: stations[stationIndex].name
             }
         );
     }
 
     destinationChanged(e, value) {
+        let { destinations } = this.state;
+        let destinationsIndex = destinations.findIndex(f => f.way === value);
         this.setState(
             {
                 selectedDestinationId: value,
+                selectedDestinationName: destinations[destinationsIndex].name
             }
         );
     }
 
     addToFavorites() {
         let key = 'fav_' + Math.random().toString(36).substring(7);
+        let routeImageIndex = this.state.metros.findIndex(m => m.id === this.state.selectedMetroId);
 
         let route = {};
         route.url = 'missions/' +
             this.state.selectedMetroId + '/from/' +
             this.state.selectedDepartureId + '/way/' +
             this.state.selectedDestinationId;
-
-            route.origin =
-            route.destination = 
-            route.type = this.props.transportType;
-            route.line = this.state.selectedMetroId;
+        route.origin = this.state.selectedDepartureName;
+        route.destination = this.state.selectedDestinationName;
+        route.type = this.props.transportType;
+        route.line = this.state.selectedMetroId;
+        route.image = "images/" + this.state.metros[routeImageIndex].image;
+        route.favKey = key;
 
         localStorage.setItem(key, JSON.stringify(route));
 
