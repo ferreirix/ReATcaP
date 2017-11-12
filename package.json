@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "react-scripts": "0.9.5"
+    "react-scripts": "1.0.17"
   },
   "dependencies": {
-    "axios": "^0.16.1",
+    "axios": "^0.17.1",
     "immutability-helper": "^2.1.1",
-    "material-ui": "^0.18.1",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "material-ui": "^0.19.4",
+    "react": "^16.1.0",
+    "react-dom": "^16.1.0",
     "react-swipeable-views": "^0.12.2",
-    "react-tap-event-plugin": "^2.0.1",
+    "react-tap-event-plugin": "^3.0.2",
     "redux": "^3.6.0",
     "uuid": "^3.0.1"
   },
